@@ -1,12 +1,9 @@
 package com.briankamangagroup.briankamangagroup_information_management_system.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.Nationalized;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +13,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -26,32 +22,35 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(
-    name = "master_company_customer",
+    name = "master_company_product_category",
     schema = "briankamangagroup_information_management_system",
     uniqueConstraints = {
         @UniqueConstraint(
-            name = "uq_master_company_customer_master_company_profile_header_id_company_code",
-            columnNames = {"master_company_profile_header_id", "company_code"}
-        )
+            name = "uq_master_company_product_category_master_company_profile_header_id_product_category_code",
+            columnNames = {
+                "master_company_profile_header_id",
+                "product_category_code"
+            }
+        )        
     }
 )
-
-public class MasterCompanyCustomer {
+public class MasterCompanyProductCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    )
     @Column(
-        name = "master_company_customer_id", 
+        name = "master_company_product_category_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long masterCompanyCustomerId;
+    private Long masterCompanyProductCategoryId;
 
-    @Nationalized
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
@@ -60,70 +59,31 @@ public class MasterCompanyCustomer {
         name = "master_company_profile_header_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_master_company_customer_master_company_profile_header_master_company_profile_header_id"
+            name = "fk_master_company_product_category_master_company_profile_header_id"
         )
     )
     private MasterCompanyProfileHeader masterCompanyProfileHeader;
 
-    @Nationalized
     @Column(
-        name = "customer_code", 
+        name = "product_category_code",
         nullable = false,
-        columnDefinition = "NVARCHAR(100)"
+        columnDefinition = "NVARCHAR(50)"
     )
-    private String customerCode;
+    private String productCategoryCode;
 
-    @Nationalized
     @Column(
-        name = "customer_name",
+        name = "product_category_name",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
-    private String customerName;
+    private String productCategoryName;
 
-    @Nationalized
     @Column(
-        name = "customer_description",
+        name = "product_category_description",
         nullable = true,
         columnDefinition = "NVARCHAR(1000)"
     )
-    private String customerDescription;
-
-    @Nationalized
-    @Column(
-        name = "customer_address",
-        nullable = true,
-        columnDefinition = "NVARCHAR(1000)"
-    )
-    private String customerAddress;
-
-    @Nationalized
-    @Column(
-        name = "customer_contact_person",
-        nullable = true,
-        columnDefinition = "NVARCHAR(255)"
-    )
-    private String customerContactPerson;
-
-    @Nationalized
-    @Column(
-        name = "customer_phone_number",
-        nullable = true,
-        columnDefinition = "NVARCHAR(255)"
-    )
-    private String customerPhoneNumber;
-
-    @Nationalized
-    @Column(
-        name = "customer_email",
-        nullable = true,
-        columnDefinition = "NVARCHAR(255)"
-    )
-    private String customerEmail;
-
-
-
-
+    private String productCategoryDescription;
 
     @Column(
         name = "is_active",
@@ -131,7 +91,7 @@ public class MasterCompanyCustomer {
         columnDefinition = "BIT"
     )
     @ColumnDefault("1")
-    private Boolean isActive = true;    
+    private Boolean isActive;
 
     @Column(
         name = "created_date",
@@ -141,14 +101,13 @@ public class MasterCompanyCustomer {
     @ColumnDefault("GETDATE()")
     private LocalDateTime createdDate;
 
-    @Nationalized
     @Column(
         name = "created_by",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
     @ColumnDefault("SYSTEM_USER")
-    private String createdBy;   
+    private String createdBy;
 
     @Column(
         name = "modified_date",
@@ -157,7 +116,6 @@ public class MasterCompanyCustomer {
     )
     private LocalDateTime modifiedDate;
 
-    @Nationalized
     @Column(
         name = "modified_by",
         nullable = true,
@@ -170,9 +128,8 @@ public class MasterCompanyCustomer {
         nullable = true,
         columnDefinition = "DATETIME2"
     )
-    private LocalDateTime deactivatedDate;    
+    private LocalDateTime deactivatedDate;
 
-    @Nationalized
     @Column(
         name = "deactivated_by",
         nullable = true,
@@ -181,16 +138,4 @@ public class MasterCompanyCustomer {
     private String deactivatedBy;
 
 
-
-    @OneToMany(
-        mappedBy = "masterCompanyCustomer",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTask> projectTasks;
-
-
 }
-
-
