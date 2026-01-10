@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
 import jakarta.persistence.CascadeType;
+// import jakarta.persistence.CheckConstraint;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,100 +31,119 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "master_company_customer",
-    schema = "briankamangagroup_information_management_system",
+    name = "project_task",
+    schema = "process",
     uniqueConstraints = {
         @UniqueConstraint(
-            name = "uq_master_company_customer_master_company_profile_header_id_company_code",
-            columnNames = {"master_company_profile_header_id", "company_code"}
+            name = "uq_project_task_project_id_task_code",
+            columnNames = {"project_id", "task_code"}
         )
     }
+    // ,
+    // checkConstraints = {
+    //     @CheckConstraint(
+    //         name = "CK_your_table_start_end",
+    //         constraint = "end_date IS NULL OR end_date >= start_date"
+                        
+    //     )
+    // }
 )
-
-public class MasterCompanyCustomer {
+public class ProjectTask {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(
-        name = "master_company_customer_id", 
-        nullable = false,
-        updatable = false,
-        columnDefinition = "INT"
+    @GeneratedValue(
+        strategy = GenerationType.IDENTITY
     )
-    private Long masterCompanyCustomerId;
+    @Column(
+        name = "project_task_id",
+        nullable = false,
+        updatable = false
+    )
+    private Long projectTaskId;
 
-    @Nationalized
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
     )
     @JoinColumn(
-        name = "master_company_profile_header_id",
+        name = "project_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_master_company_customer_master_company_profile_header_master_company_profile_header_id"
+            name = "fk_project_task_project_id"
         )
     )
-    private MasterCompanyProfileHeader masterCompanyProfileHeader;
+    private Project project;
 
     @Nationalized
     @Column(
-        name = "customer_code", 
+        name = "task_code",
         nullable = false,
         columnDefinition = "NVARCHAR(100)"
     )
-    private String customerCode;
+    private String taskCode;
 
     @Nationalized
     @Column(
-        name = "customer_name",
+        name = "task_name",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
-    private String customerName;
+    private String taskName;
 
     @Nationalized
     @Column(
-        name = "customer_description",
+        name = "task_description",
         nullable = true,
-        columnDefinition = "NVARCHAR(1000)"
+        columnDefinition = "NVARCHAR(max)"
     )
-    private String customerDescription;
+    private String taskDescription;
+
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = true
+    )
+    @JoinColumn(
+        name = "assigned_to_user_id",
+        nullable = true,
+        foreignKey = @ForeignKey(
+            name = "fk_project_task_assigned_to_user_id"
+        )
+    )
+    private MasterSystemUser assignedToUserId;
+
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = true
+    )
+    @JoinColumn(
+        name = "master_company_customer_id",
+        nullable = true,
+        foreignKey = @ForeignKey(
+            name = "fk_project_task_master_company_customer_id"
+        )
+    )
+    private MasterCompanyCustomer masterCompanyCustomer;
 
     @Nationalized
     @Column(
-        name = "customer_address",
+        name = "task_status",
         nullable = true,
-        columnDefinition = "NVARCHAR(1000)"
+        columnDefinition = "NVARCHAR(50) CONSTRAINT chk_project_task_task_status CHECK (task_status IN ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
     )
-    private String customerAddress;
+    private String taskStatus;
 
-    @Nationalized
     @Column(
-        name = "customer_contact_person",
+        name = "start_date",
         nullable = true,
-        columnDefinition = "NVARCHAR(255)"
+        columnDefinition = "DATETIME2"
     )
-    private String customerContactPerson;
+    private LocalDateTime startDate;
 
-    @Nationalized
     @Column(
-        name = "customer_phone_number",
+        name = "end_date",
         nullable = true,
-        columnDefinition = "NVARCHAR(255)"
+        columnDefinition = "DATETIME2"
     )
-    private String customerPhoneNumber;
-
-    @Nationalized
-    @Column(
-        name = "customer_email",
-        nullable = true,
-        columnDefinition = "NVARCHAR(255)"
-    )
-    private String customerEmail;
-
-
-
-
+    private LocalDateTime endDate;
 
     @Column(
         name = "is_active",
@@ -131,7 +151,7 @@ public class MasterCompanyCustomer {
         columnDefinition = "BIT"
     )
     @ColumnDefault("1")
-    private Boolean isActive = true;    
+    private Boolean isActive;
 
     @Column(
         name = "created_date",
@@ -141,14 +161,13 @@ public class MasterCompanyCustomer {
     @ColumnDefault("GETDATE()")
     private LocalDateTime createdDate;
 
-    @Nationalized
     @Column(
         name = "created_by",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
     @ColumnDefault("SYSTEM_USER")
-    private String createdBy;   
+    private String createdBy;
 
     @Column(
         name = "modified_date",
@@ -157,7 +176,6 @@ public class MasterCompanyCustomer {
     )
     private LocalDateTime modifiedDate;
 
-    @Nationalized
     @Column(
         name = "modified_by",
         nullable = true,
@@ -170,9 +188,8 @@ public class MasterCompanyCustomer {
         nullable = true,
         columnDefinition = "DATETIME2"
     )
-    private LocalDateTime deactivatedDate;    
+    private LocalDateTime deactivatedDate;
 
-    @Nationalized
     @Column(
         name = "deactivated_by",
         nullable = true,
@@ -181,16 +198,12 @@ public class MasterCompanyCustomer {
     private String deactivatedBy;
 
 
-
     @OneToMany(
-        mappedBy = "masterCompanyCustomer",
+        mappedBy = "projectTask",
         fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
     )
-    private List<ProjectTask> projectTasks;
-
+    private List<ProjectTimeEntry> projectTimeEntries;
 
 }
-
-

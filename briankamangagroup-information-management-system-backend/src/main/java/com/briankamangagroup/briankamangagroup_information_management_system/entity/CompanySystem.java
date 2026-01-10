@@ -30,100 +30,81 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "master_company_customer",
+    name = "company_system",
     schema = "briankamangagroup_information_management_system",
     uniqueConstraints = {
         @UniqueConstraint(
-            name = "uq_master_company_customer_master_company_profile_header_id_company_code",
-            columnNames = {"master_company_profile_header_id", "company_code"}
+            name = "uq_company_system_master_company_profile_header_id_system_code",
+            columnNames = {
+                "master_company_profile_header_id",
+                "system_code"
+            }
         )
     }
 )
-
-public class MasterCompanyCustomer {
+public class CompanySystem {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(
-        name = "master_company_customer_id", 
+        name = "company_system_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long masterCompanyCustomerId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long companySystemId;
 
     @Nationalized
     @ManyToOne(
-        fetch = FetchType.LAZY,
+        fetch = FetchType.LAZY, 
         optional = false
     )
     @JoinColumn(
         name = "master_company_profile_header_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_master_company_customer_master_company_profile_header_master_company_profile_header_id"
+            name = "fk_company_system_master_company_profile_header_master_company_profile_header_id"
         )
     )
     private MasterCompanyProfileHeader masterCompanyProfileHeader;
 
     @Nationalized
     @Column(
-        name = "customer_code", 
+        name = "system_code",
         nullable = false,
-        columnDefinition = "NVARCHAR(100)"
+        columnDefinition = "NVARCHAR(50)"
     )
-    private String customerCode;
+    private String systemCode;
 
     @Nationalized
     @Column(
-        name = "customer_name",
+        name = "system_name",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
-    private String customerName;
+    private String systemName;
 
     @Nationalized
     @Column(
-        name = "customer_description",
-        nullable = true,
-        columnDefinition = "NVARCHAR(1000)"
+        name = "system_description",
+        columnDefinition = "NVARCHAR(max)"
     )
-    private String customerDescription;
+    private String systemDescription;
 
     @Nationalized
     @Column(
-        name = "customer_address",
+        name = "version",
         nullable = true,
-        columnDefinition = "NVARCHAR(1000)"
+        columnDefinition = "NVARCHAR(50)"
     )
-    private String customerAddress;
+    private String version;
 
     @Nationalized
     @Column(
-        name = "customer_contact_person",
-        nullable = true,
-        columnDefinition = "NVARCHAR(255)"
+        name = "status",
+        nullable = false,
+        columnDefinition = "NVARCHAR(50) CONSTRAINT chk_company_system_status CHECK (status IN ('Initiated', 'Development', 'In Progress', 'Completed', 'Testing', 'Deployed'))"
     )
-    private String customerContactPerson;
-
-    @Nationalized
-    @Column(
-        name = "customer_phone_number",
-        nullable = true,
-        columnDefinition = "NVARCHAR(255)"
-    )
-    private String customerPhoneNumber;
-
-    @Nationalized
-    @Column(
-        name = "customer_email",
-        nullable = true,
-        columnDefinition = "NVARCHAR(255)"
-    )
-    private String customerEmail;
-
-
-
-
+    private String status;
 
     @Column(
         name = "is_active",
@@ -131,7 +112,7 @@ public class MasterCompanyCustomer {
         columnDefinition = "BIT"
     )
     @ColumnDefault("1")
-    private Boolean isActive = true;    
+    private Boolean isActive;
 
     @Column(
         name = "created_date",
@@ -141,14 +122,13 @@ public class MasterCompanyCustomer {
     @ColumnDefault("GETDATE()")
     private LocalDateTime createdDate;
 
-    @Nationalized
     @Column(
         name = "created_by",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
     @ColumnDefault("SYSTEM_USER")
-    private String createdBy;   
+    private String createdBy;
 
     @Column(
         name = "modified_date",
@@ -157,7 +137,6 @@ public class MasterCompanyCustomer {
     )
     private LocalDateTime modifiedDate;
 
-    @Nationalized
     @Column(
         name = "modified_by",
         nullable = true,
@@ -170,9 +149,8 @@ public class MasterCompanyCustomer {
         nullable = true,
         columnDefinition = "DATETIME2"
     )
-    private LocalDateTime deactivatedDate;    
+    private LocalDateTime deactivatedDate;
 
-    @Nationalized
     @Column(
         name = "deactivated_by",
         nullable = true,
@@ -180,17 +158,31 @@ public class MasterCompanyCustomer {
     )
     private String deactivatedBy;
 
+    
+    @OneToMany(
+        mappedBy = "companySystem",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<MasterSystemUser> masterSystemUsers;
 
 
     @OneToMany(
-        mappedBy = "masterCompanyCustomer",
+        mappedBy = "companySystem",
         fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
     )
-    private List<ProjectTask> projectTasks;
+    private List<MasterSystemRole> masterSystemRoles;
 
 
+    @OneToMany(
+        mappedBy = "companySystem",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<Project> projects;
+    
 }
-
-

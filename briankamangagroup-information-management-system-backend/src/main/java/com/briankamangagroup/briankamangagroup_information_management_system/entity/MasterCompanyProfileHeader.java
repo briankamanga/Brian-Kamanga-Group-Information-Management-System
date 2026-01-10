@@ -235,11 +235,25 @@ public class MasterCompanyProfileHeader {
     )
     private List<MasterCompanyCustomer> masterCompanyCustomers;
 
+    // Reverse relationship with CompanySystem
+    @OneToMany(
+        mappedBy = "masterCompanyProfileHeader",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<CompanySystem> companySystems;
 
-    // @OneToMany(
-    //     mappedBy = "masterCompanyProfileHeader",
-    //     cascade = CascadeType.ALL,
-    //     orphanRemoval = true
-    // )
-    // private Set<MasterCompanyCustomer> masterCompanyCustomers = new HashSet<>(); 
+
+
+    // Reverse relationship with MasterCompanyProductCategory
+    @OneToMany(
+        mappedBy = "masterCompanyProfileHeader",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<MasterCompanyProductCategory> masterCompanyProductCategories;
+
+
 }
