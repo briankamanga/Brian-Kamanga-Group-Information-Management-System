@@ -1,5 +1,6 @@
 package com.briankamangagroup.briankamangagroup_information_management_system.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,85 +19,107 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(
-    name = "project",
-    schema = "process",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "uq_project_company_system_id_project_code",
-            columnNames = {"company_system_id", "project_code"}
-        )
-    }
-)
-public class Project {
+    name = "time_entry",
+    schema = "human_resource"
+)  
+public class TimeEntry {
     @Id
-    @GeneratedValue(
+    @GeneratedValue
+    (
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "project_id",
+        name = "time_entry_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long projectId;
+    private Long timeEntryId;
 
+    // Foreign Key to Employee entity
+    // private Long employeeId;
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
     )
     @JoinColumn(
-        name = "company_system_id",
+        name = "employee_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_project_company_system_id"
+            name = "fk_timeentry_employee"
+        )   
+    )
+    private Employee employee;
+
+
+    @Nationalized
+    @Column(
+        name = "date",
+        nullable = false,
+        columnDefinition = "DATE"
+    )   
+    private LocalDate date;
+
+    @Nationalized
+    @Column(
+        name = "hours",
+        nullable = false,
+        columnDefinition = "MONEY"
+    )
+    private Double hours;
+    
+
+
+    // Foreign Key to Project entity
+    // private Long projectId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false    
+    )
+    @JoinColumn(
+        name = "project_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_timeentry_project"
         )
     )
-    private CompanySystem companySystem;
+    private Project project;
+
 
     @Nationalized
     @Column(
-        name = "project_code",
-        nullable = false,
-        columnDefinition = "VARCHAR(50)"
+        name = "approval_status",
+        nullable = true,
+        columnDefinition = "NVARCHAR(50)"
     )
-    private String projectCode;
+    private String approvalStatus;
 
-    @Nationalized
-    @Column(
-        name = "project_name",
-        nullable = false,
-        columnDefinition = "VARCHAR(100)"
-    )
-    private String projectName;
+    // CREATE TABLE TimeEntry (
+    //     time_entry_id   BIGINT PRIMARY KEY,
+    //     employee_id     BIGINT NOT NULL,
+    //     date            DATE NOT NULL,
+    //     hours           DECIMAL(5,2) NOT NULL,
+    //     project_id      BIGINT,
+    //     approval_status VARCHAR(50),
 
-    @Nationalized
-    @Column(
-        name = "project_description",
-        columnDefinition = "VARCHAR(max)"
-    )
-    private String projectDescription;
+    //     CONSTRAINT fk_timeentry_employee
+    //         FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
+    // );
 
-    @Nationalized
-    @Column(
-        name = "project_status",
-        nullable = false,
-        columnDefinition = "VARCHAR(50) CONSTRAINT chk_project_status CHECK (project_status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
-    )
-    @ColumnDefault("'PLANNED'")
-    private String projectStatus;
+
+
+
 
     @Column(
         name = "is_active",
@@ -153,33 +176,15 @@ public class Project {
 
 
 
-
-
+    // OneToMany - Self-referential relationship
     @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTask> projectTasks;
-
-
-    @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTimeEntry> projectTimeEntries;
-
-
-    // OneToMany with TimeEntry Entity
-    @OneToMany(
-        mappedBy = "project",
+        mappedBy = "timeEntries",
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
     private List<TimeEntry> timeEntries;
+
+
 
 }

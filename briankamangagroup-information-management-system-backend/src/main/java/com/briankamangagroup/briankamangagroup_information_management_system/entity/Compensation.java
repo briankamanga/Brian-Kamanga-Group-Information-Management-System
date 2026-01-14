@@ -1,6 +1,7 @@
 package com.briankamangagroup.briankamangagroup_information_management_system.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -18,85 +19,119 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(
-    name = "project",
-    schema = "process",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "uq_project_company_system_id_project_code",
-            columnNames = {"company_system_id", "project_code"}
-        )
-    }
+    name = "compensation",
+    schema = "human_resource"
 )
-public class Project {
+public class Compensation {
     @Id
     @GeneratedValue(
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "project_id",
+        name = "compensation_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long projectId;
+    private Long compensationId;
 
+
+
+
+    // Foreign Key to Employee entity
+    // private Long employeeId;
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
     )
     @JoinColumn(
-        name = "company_system_id",
+        name = "employee_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_project_company_system_id"
+            name = "fk_compensation_employee"
         )
     )
-    private CompanySystem companySystem;
+    private Employee employee;
+
+
+
+
 
     @Nationalized
     @Column(
-        name = "project_code",
+        name = "base_salary",
         nullable = false,
-        columnDefinition = "VARCHAR(50)"
+        columnDefinition = "MONEY"
     )
-    private String projectCode;
+    private Double baseSalary;
 
     @Nationalized
     @Column(
-        name = "project_name",
+        name = "currency",
         nullable = false,
-        columnDefinition = "VARCHAR(100)"
+        columnDefinition = "NVARCHAR(10)"
     )
-    private String projectName;
+    private String currency;
+
 
     @Nationalized
     @Column(
-        name = "project_description",
-        columnDefinition = "VARCHAR(max)"
-    )
-    private String projectDescription;
-
-    @Nationalized
-    @Column(
-        name = "project_status",
+        name = "pay_frequency",
         nullable = false,
-        columnDefinition = "VARCHAR(50) CONSTRAINT chk_project_status CHECK (project_status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
+        columnDefinition = "NVARCHAR(50)"
     )
-    @ColumnDefault("'PLANNED'")
-    private String projectStatus;
+    private String payFrequency;
+
+    @Nationalized
+    @Column(
+        name = "bonus_target",
+        nullable = true,
+        columnDefinition = "MONEY"
+    )
+    private Double bonusTarget;
+
+    @Nationalized
+    @Column(
+        name = "effective_start",
+        nullable = false,
+        columnDefinition = "DATE"
+    )
+    private String effectiveStart;
+
+    @Nationalized
+    @Column(
+        name = "effective_end",
+        nullable = true,
+        columnDefinition = "DATE"
+    )
+    private String effectiveEnd;
+
+    // CREATE TABLE Compensation (
+    //     compensation_id   BIGINT PRIMARY KEY,
+    //     employee_id       BIGINT NOT NULL,
+    //     base_salary       DECIMAL(12,2) NOT NULL,
+    //     currency          VARCHAR(10) NOT NULL,
+    //     pay_frequency     VARCHAR(50),
+    //     bonus_target      DECIMAL(5,2),
+    //     effective_start   DATE NOT NULL,
+    //     effective_end     DATE,
+
+    //     CONSTRAINT fk_compensation_employee
+    //         FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
+    // );
+
+
 
     @Column(
         name = "is_active",
@@ -155,31 +190,14 @@ public class Project {
 
 
 
+
+    // OneToMany Relationship - self-referencing example
     @OneToMany(
-        mappedBy = "project",
         fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTask> projectTasks;
-
-
-    @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTimeEntry> projectTimeEntries;
-
-
-    // OneToMany with TimeEntry Entity
-    @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
+        mappedBy = "compensations",
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    private List<TimeEntry> timeEntries;
+    private List<Compensation> compensations;   
 
 }

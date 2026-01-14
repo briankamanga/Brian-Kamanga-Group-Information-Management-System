@@ -10,93 +10,93 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(
-    name = "project",
-    schema = "process",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "uq_project_company_system_id_project_code",
-            columnNames = {"company_system_id", "project_code"}
-        )
-    }
+    name = "job_position",
+    schema = "human_resource"
 )
-public class Project {
+public class JobPosition {
     @Id
-    @GeneratedValue(
-        strategy = GenerationType.IDENTITY
-    )
     @Column(
-        name = "project_id",
+        name = "job_id", 
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long projectId;
-
-    @ManyToOne(
-        fetch = FetchType.LAZY,
-        optional = false
+    @GeneratedValue(
+        strategy = GenerationType.IDENTITY
     )
-    @JoinColumn(
-        name = "company_system_id",
-        nullable = false,
-        foreignKey = @ForeignKey(
-            name = "fk_project_company_system_id"
-        )
-    )
-    private CompanySystem companySystem;
+    private Long jobId;
 
     @Nationalized
     @Column(
-        name = "project_code",
+        name = "job_title",
         nullable = false,
-        columnDefinition = "VARCHAR(50)"
+        columnDefinition = "NVARCHAR(200)"
     )
-    private String projectCode;
+    private String title;
+    
+    @Nationalized
+    @Column(
+        name = "job_family",
+        nullable = true,
+        columnDefinition = "NVARCHAR(100)"
+    )
+    private String jobFamily;
 
     @Nationalized
     @Column(
-        name = "project_name",
-        nullable = false,
-        columnDefinition = "VARCHAR(100)"
+        name = "job_level",
+        nullable = true,
+        columnDefinition = "NVARCHAR(50)"
     )
-    private String projectName;
+    private String jobLevel;
 
     @Nationalized
     @Column(
-        name = "project_description",
-        columnDefinition = "VARCHAR(max)"
+        name = "description",
+        nullable = true,
+        columnDefinition = "NVARCHAR(MAX)"
     )
-    private String projectDescription;
+    private String description;
 
     @Nationalized
     @Column(
-        name = "project_status",
-        nullable = false,
-        columnDefinition = "VARCHAR(50) CONSTRAINT chk_project_status CHECK (project_status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
+        name = "competencies",
+        nullable = true,
+        columnDefinition = "NVARCHAR(MAX)"
     )
-    @ColumnDefault("'PLANNED'")
-    private String projectStatus;
+    private String competencies; // JSON string representing competencies
+
+
+//     CREATE TABLE Job (
+//     job_id        BIGINT PRIMARY KEY,
+//     title         VARCHAR(200) NOT NULL,
+//     job_family    VARCHAR(100),
+//     job_level     VARCHAR(50),
+//     description   TEXT,
+//     competencies  JSON
+// );
+
+
+
+
+
+
 
     @Column(
         name = "is_active",
@@ -104,7 +104,7 @@ public class Project {
         columnDefinition = "BIT"
     )
     @ColumnDefault("1")
-    private Boolean isActive;
+    private Boolean isActive = true;    
 
     @Column(
         name = "created_date",
@@ -114,13 +114,14 @@ public class Project {
     @ColumnDefault("GETDATE()")
     private LocalDateTime createdDate;
 
+    @Nationalized
     @Column(
         name = "created_by",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
     @ColumnDefault("SYSTEM_USER")
-    private String createdBy;
+    private String createdBy;   
 
     @Column(
         name = "modified_date",
@@ -129,6 +130,7 @@ public class Project {
     )
     private LocalDateTime modifiedDate;
 
+    @Nationalized
     @Column(
         name = "modified_by",
         nullable = true,
@@ -141,8 +143,9 @@ public class Project {
         nullable = true,
         columnDefinition = "DATETIME2"
     )
-    private LocalDateTime deactivatedDate;
+    private LocalDateTime deactivatedDate;    
 
+    @Nationalized
     @Column(
         name = "deactivated_by",
         nullable = true,
@@ -152,34 +155,13 @@ public class Project {
 
 
 
-
-
-
+    // OneToMany with Employee
     @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTask> projectTasks;
-
-
-    @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTimeEntry> projectTimeEntries;
-
-
-    // OneToMany with TimeEntry Entity
-    @OneToMany(
-        mappedBy = "project",
+        mappedBy = "jobPosition",
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    private List<TimeEntry> timeEntries;
+    private List<Employee> employees;
 
 }

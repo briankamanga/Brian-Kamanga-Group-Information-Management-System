@@ -1,5 +1,6 @@
 package com.briankamangagroup.briankamangagroup_information_management_system.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,85 +19,124 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(
-    name = "project",
-    schema = "process",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "uq_project_company_system_id_project_code",
-            columnNames = {"company_system_id", "project_code"}
-        )
-    }
+    name = "leave_request",
+    schema = "human_resource"
 )
-public class Project {
+public class LeaveRequest {
     @Id
     @GeneratedValue(
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "project_id",
+        name = "leave_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long projectId;
+    private Long leaveId;
 
+
+
+    // Foreign Key to Employee Entity
+    // private Long employeeId;
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
     )
     @JoinColumn(
-        name = "company_system_id",
+        name = "employee_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_project_company_system_id"
+            name = "fk_leave_request_employee_id"
         )
     )
-    private CompanySystem companySystem;
+    private Employee employee;
+
 
     @Nationalized
     @Column(
-        name = "project_code",
-        nullable = false,
-        columnDefinition = "VARCHAR(50)"
+        name = "leave_type",
+        nullable = true,
+        columnDefinition = "NVARCHAR(100)"
     )
-    private String projectCode;
+    private String leaveType;
+
+
 
     @Nationalized
     @Column(
-        name = "project_name",
-        nullable = false,
-        columnDefinition = "VARCHAR(100)"
+        name = "start_date",
+        nullable = true,
+        columnDefinition = "DATE"
     )
-    private String projectName;
+    private LocalDate startDate;
+
+    
 
     @Nationalized
     @Column(
-        name = "project_description",
-        columnDefinition = "VARCHAR(max)"
+        name = "end_date",
+        nullable = true,
+        columnDefinition = "DATE"
     )
-    private String projectDescription;
+    private LocalDate endDate;
+
+
 
     @Nationalized
     @Column(
-        name = "project_status",
-        nullable = false,
-        columnDefinition = "VARCHAR(50) CONSTRAINT chk_project_status CHECK (project_status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
+        name = "status",
+        nullable = true,
+        columnDefinition = "NVARCHAR(100)"
     )
-    @ColumnDefault("'PLANNED'")
-    private String projectStatus;
+    private String status;
+
+
+    // Foreign Key to Employee Entity - approver
+    // private Long approverId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false
+    )
+    @JoinColumn(
+        name = "employee_id",
+        foreignKey = @ForeignKey(
+            name = "fk_leave_request_approver_id"
+        )
+    )
+    private Employee approver;
+
+
+    // CREATE TABLE LeaveRequest (
+    //     leave_id      BIGINT PRIMARY KEY,
+    //     employee_id   BIGINT NOT NULL,
+    //     leave_type    VARCHAR(100) NOT NULL,
+    //     start_date    DATE NOT NULL,
+    //     end_date      DATE NOT NULL,
+    //     status        VARCHAR(50),
+    //     approver_id   BIGINT,
+
+    //     CONSTRAINT fk_leave_employee
+    //         FOREIGN KEY (employee_id) REFERENCES Employee(employee_id),
+
+    //     CONSTRAINT fk_leave_approver
+    //         FOREIGN KEY (approver_id) REFERENCES Employee(employee_id)
+    // );
+
+
+
+
 
     @Column(
         name = "is_active",
@@ -152,34 +192,15 @@ public class Project {
 
 
 
-
-
-
+    // OneToMany - Self-Referential relationship
     @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTask> projectTasks;
-
-
-    @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTimeEntry> projectTimeEntries;
-
-
-    // OneToMany with TimeEntry Entity
-    @OneToMany(
-        mappedBy = "project",
+        mappedBy = "leaveRequests",
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    private List<TimeEntry> timeEntries;
+    private List<LeaveRequest> leaveRequests;
+
+
 
 }
