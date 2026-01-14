@@ -200,4 +200,14 @@ public class Department {
     private List<Employee> employees;
 
 
+    // OneToMany linked JobRequisition
+    @OneToMany(
+        mappedBy = "department",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<JobRequisition> jobRequisitions;
+
+
 }

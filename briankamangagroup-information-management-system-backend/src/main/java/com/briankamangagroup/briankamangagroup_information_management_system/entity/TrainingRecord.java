@@ -2,12 +2,10 @@ package com.briankamangagroup.briankamangagroup_information_management_system.en
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,24 +27,23 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "time_entry",
+    name = "training_record",
     schema = "human_resource"
-)  
-public class TimeEntry {
+)
+public class TrainingRecord {
     @Id
-    @GeneratedValue
-    (
+    @GeneratedValue(
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "time_entry_id",
+        name = "training_record_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long timeEntryId;
+    private Long trainingRecordId;
 
-    // Foreign Key to Employee entity
+    // Foreign Key to Employee Entity
     // private Long employeeId;
     @ManyToOne(
         fetch = FetchType.LAZY,
@@ -57,67 +53,63 @@ public class TimeEntry {
         name = "employee_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_timeentry_employee"
-        )   
+            name = "fk_training_record_employee_id"
+        )
     )
     private Employee employee;
 
 
-    @Nationalized
-    @Column(
-        name = "date",
-        nullable = false,
-        columnDefinition = "DATE"
-    )   
-    private LocalDate date;
 
     @Nationalized
     @Column(
-        name = "hours",
+        name = "course_name",
         nullable = false,
-        columnDefinition = "MONEY"
+        columnDefinition = "NVARCHAR(MAX)"
     )
-    private Double hours;
-    
+    private String courseName;
 
-
-    // Foreign Key to Project entity
-    // private Long projectId;
-    @ManyToOne(
-        fetch = FetchType.LAZY,
-        optional = false    
-    )
-    @JoinColumn(
-        name = "project_id",
-        nullable = false,
-        foreignKey = @ForeignKey(
-            name = "fk_timeentry_project"
-        )
-    )
-    private Project project;
 
 
     @Nationalized
     @Column(
-        name = "approval_status",
+        name = "provider",
         nullable = true,
-        columnDefinition = "NVARCHAR(50)"
+        columnDefinition = "NVARCHAR(MAX)"
     )
-    private String approvalStatus;
+    private String provider;
 
-    // CREATE TABLE TimeEntry (
-    //     time_entry_id   BIGINT PRIMARY KEY,
-    //     employee_id     BIGINT NOT NULL,
-    //     date            DATE NOT NULL,
-    //     hours           DECIMAL(5,2) NOT NULL,
-    //     project_id      BIGINT,
-    //     approval_status VARCHAR(50),
 
-    //     CONSTRAINT fk_timeentry_employee
+
+    @Nationalized
+    @Column(
+        name = "completion_date",
+        nullable = true,
+        columnDefinition = "DATE"
+    )
+    private LocalDate completionDate;
+
+
+
+
+    @Nationalized
+    @Column(
+        name = "certificate_url",
+        nullable = true,
+        columnDefinition = "NVARCHAR(MAX)"
+    )
+    private String certificateUrl;
+
+    // CREATE TABLE TrainingRecord (
+    //     training_id      BIGINT PRIMARY KEY,
+    //     employee_id      BIGINT NOT NULL,
+    //     course_name      VARCHAR(200) NOT NULL,
+    //     provider         VARCHAR(200),
+    //     completion_date  DATE,
+    //     certificate_url  VARCHAR(500),
+
+    //     CONSTRAINT fk_training_employee
     //         FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
     // );
-
-
 
 
 
@@ -175,15 +167,6 @@ public class TimeEntry {
 
 
 
-
-    // // OneToMany - Self-referential relationship
-    // @OneToMany(
-    //     mappedBy = "timeEntries",
-    //     fetch = FetchType.LAZY,
-    //     cascade = CascadeType.ALL,
-    //     orphanRemoval = true
-    // )
-    // private List<TimeEntry> timeEntries;
 
 
 

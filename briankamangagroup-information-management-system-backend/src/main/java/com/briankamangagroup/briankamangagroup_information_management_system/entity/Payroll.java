@@ -188,12 +188,12 @@ public class Payroll {
 
 
 
-    // OneToMany - Self-referencing
-    @OneToMany(
-        mappedBy = "parentPayrolls",
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<Payroll> parentPayrolls;
+    // // OneToMany - Self-referencing
+    // @OneToMany(
+    //     mappedBy = "parentPayrolls",
+    //     fetch = FetchType.LAZY,
+    //     cascade = CascadeType.ALL,
+    //     orphanRemoval = true
+    // )
+    // private List<Payroll> parentPayrolls;
 }

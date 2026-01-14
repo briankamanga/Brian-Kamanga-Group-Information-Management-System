@@ -377,5 +377,33 @@ public class Employee {
     )
     private List<LeaveRequest> leaveRequestsApproverId;
 
+    // OneToMany with employee_id in PerformanceReview Entity
+    @OneToMany(
+        mappedBy = "employee",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<PerformanceReview> performanceReviews;
+
+
+    // OneToMany with reviewer_id in PerformanceReview Entity
+    @OneToMany(
+        mappedBy = "reviewerEmployee",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<PerformanceReview> reviewerEmployees;
+
+    // OneToMany with employee_id in TrainingRecord Entity
+    @OneToMany(
+        mappedBy = "employee",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<TrainingRecord> trainingRecords;
+
 
 }

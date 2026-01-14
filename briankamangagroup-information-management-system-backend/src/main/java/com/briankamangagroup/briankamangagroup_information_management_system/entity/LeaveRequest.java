@@ -110,7 +110,7 @@ public class LeaveRequest {
         optional = false
     )
     @JoinColumn(
-        name = "employee_id",
+        name = "approver_id",
         foreignKey = @ForeignKey(
             name = "fk_leave_request_approver_id"
         )
@@ -192,14 +192,14 @@ public class LeaveRequest {
 
 
 
-    // OneToMany - Self-Referential relationship
-    @OneToMany(
-        mappedBy = "leaveRequests",
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<LeaveRequest> leaveRequests;
+    // // OneToMany - Self-Referential relationship
+    // @OneToMany(
+    //     mappedBy = "leaveRequests",
+    //     fetch = FetchType.LAZY,
+    //     cascade = CascadeType.ALL,
+    //     orphanRemoval = true
+    // )
+    // private List<LeaveRequest> leaveRequests;
 
 
 

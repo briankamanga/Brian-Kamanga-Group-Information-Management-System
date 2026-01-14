@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "workflow",
+    name = "work_flow",
     schema = "human_resource"
 )
 public class WorkFlow {
@@ -49,7 +49,7 @@ public class WorkFlow {
 
     @Nationalized
     @Column(
-        name = "trigger",
+        name = "work_flow_trigger",
         nullable = true,
         columnDefinition = "NVARCHAR(200)"
     )
