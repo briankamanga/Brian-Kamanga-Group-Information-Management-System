@@ -24,79 +24,106 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(
-    name = "project",
-    schema = "process",
+    name = "department",
+    schema = "human_resource",
     uniqueConstraints = {
         @UniqueConstraint(
-            name = "uq_project_company_system_id_project_code",
-            columnNames = {"company_system_id", "project_code"}
+            name = "uq_department_name_code",
+            columnNames = {
+                "name"
+            }
         )
     }
 )
-public class Project {
+public class Department {
     @Id
     @GeneratedValue(
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "project_id",
+        name = "department_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long projectId;
+    private Long departmentId;
 
+    @Nationalized
+    @Column(
+        name = "name",
+        nullable = false,
+        columnDefinition = "NVARCHAR(200)"
+    )
+    private String name;
+
+    @Nationalized
+    @Column(
+        name = "department_code",
+        nullable = true,
+        columnDefinition = "NVARCHAR(100)"
+    )
+    private String department_code;
+
+    @Nationalized
+    @Column(
+        name = "description",
+        nullable = true,
+        columnDefinition = "NVARCHAR(MAX)"
+    )
+    private String description;
+
+
+
+    // ManyToOne - Self Reference
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
     )
     @JoinColumn(
-        name = "company_system_id",
-        nullable = false,
+        name = "parent_department_id",
         foreignKey = @ForeignKey(
-            name = "fk_project_company_system_id"
+            name = "fk_department_parent_department_id"
         )
     )
-    private CompanySystem companySystem;
+    private Department department;
 
-    @Nationalized
-    @Column(
-        name = "project_code",
+
+
+
+    // Foreign Key to Employee Entity
+    // private Long headEmployeeId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false
+    )
+    @JoinColumn(
+        name = "head_employee_id",
         nullable = false,
-        columnDefinition = "VARCHAR(50)"
+        foreignKey = @ForeignKey(
+            name = "fk_department_head_employee_id"
+        )
     )
-    private String projectCode;
+    private Employee headEmployee;
 
-    @Nationalized
-    @Column(
-        name = "project_name",
-        nullable = false,
-        columnDefinition = "VARCHAR(100)"
-    )
-    private String projectName;
+    // CREATE TABLE Department (
+    //     department_id          BIGINT PRIMARY KEY,
+    //     name                   VARCHAR(200) NOT NULL,
+    //     parent_department_id   BIGINT,
+    //     head_employee_id       BIGINT,
 
-    @Nationalized
-    @Column(
-        name = "project_description",
-        columnDefinition = "VARCHAR(max)"
-    )
-    private String projectDescription;
+    //     CONSTRAINT fk_department_parent
+    //         FOREIGN KEY (parent_department_id) REFERENCES Department(department_id),
 
-    @Nationalized
-    @Column(
-        name = "project_status",
-        nullable = false,
-        columnDefinition = "VARCHAR(50) CONSTRAINT chk_project_status CHECK (project_status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
-    )
-    @ColumnDefault("'PLANNED'")
-    private String projectStatus;
+    //     CONSTRAINT fk_department_head
+    //         FOREIGN KEY (head_employee_id) REFERENCES Employee(employee_id)
+    // );
+
 
     @Column(
         name = "is_active",
@@ -152,34 +179,25 @@ public class Project {
 
 
 
-
-
-
-    @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTask> projectTasks;
-
+    // OneToMany linked departments
 
     @OneToMany(
-        mappedBy = "project",
-        fetch = FetchType.LAZY,
-        orphanRemoval = true,
-        cascade = CascadeType.ALL
-    )
-    private List<ProjectTimeEntry> projectTimeEntries;
-
-
-    // OneToMany with TimeEntry Entity
-    @OneToMany(
-        mappedBy = "project",
+        mappedBy = "department",
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
         orphanRemoval = true
     )
-    private List<TimeEntry> timeEntries;
+    private List<Department> departments;
+
+
+    // OneToMany linked employees
+    @OneToMany(
+        mappedBy = "department",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<Employee> employees;
+
 
 }
