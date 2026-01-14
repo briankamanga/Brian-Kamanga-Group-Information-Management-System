@@ -63,6 +63,16 @@ public class WorkFlow {
     )
     private String actions;
 
+
+    @Column(
+        name = "active",
+        nullable = true,
+        columnDefinition = "BIT"
+    )
+    @ColumnDefault("1")
+    private Boolean active;
+    
+
     // CREATE TABLE Workflow (
     //     workflow_id   BIGINT PRIMARY KEY,
     //     name          VARCHAR(200) NOT NULL,
@@ -73,13 +83,6 @@ public class WorkFlow {
 
 
 
-    @Column(
-        name = "active",
-        nullable = false,
-        columnDefinition = "BIT"
-    )
-    @ColumnDefault("1")
-    private Boolean active;
 
     @Column(
         name = "created_date",

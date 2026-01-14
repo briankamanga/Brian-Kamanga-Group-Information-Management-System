@@ -85,11 +85,11 @@ public class TimeEntry {
     // private Long projectId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false    
+        optional = true    
     )
     @JoinColumn(
         name = "project_id",
-        nullable = false,
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_timeentry_project"
         )

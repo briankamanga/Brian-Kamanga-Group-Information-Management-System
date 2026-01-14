@@ -136,10 +136,11 @@ public class Employee {
     // private Long jobId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "job_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_employee_job_id"
         )
@@ -152,10 +153,11 @@ public class Employee {
     // private Long departmentId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "department_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_employee_department_id"
         )
@@ -168,10 +170,11 @@ public class Employee {
     // private Long managerId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "manager_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_employee_manager_id"
         )
@@ -185,10 +188,11 @@ public class Employee {
     // private Long locationId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "location_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_employee_location_id"
         )
@@ -201,10 +205,11 @@ public class Employee {
     // private Long costCenterId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "cost_center_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_employee_cost_center_id"
         )
@@ -404,6 +409,15 @@ public class Employee {
         orphanRemoval = true
     )
     private List<TrainingRecord> trainingRecords;
+
+    // OneToMany with employee_id in AuditLog Entity
+    @OneToMany(
+        mappedBy = "employee",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<AuditLog> auditLogs;
 
 
 }

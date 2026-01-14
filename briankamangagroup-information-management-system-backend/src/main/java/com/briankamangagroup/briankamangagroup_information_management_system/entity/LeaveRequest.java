@@ -67,7 +67,7 @@ public class LeaveRequest {
     @Nationalized
     @Column(
         name = "leave_type",
-        nullable = true,
+        nullable = false,
         columnDefinition = "NVARCHAR(100)"
     )
     private String leaveType;
@@ -107,10 +107,11 @@ public class LeaveRequest {
     // private Long approverId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "approver_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_leave_request_approver_id"
         )

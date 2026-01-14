@@ -2,20 +2,100 @@ package com.briankamangagroup.briankamangagroup_information_management_system.en
 
 import java.time.LocalDateTime;
 
+
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(
+    name = "audit_log",
+    schema = "human_resource"
+)
 public class AuditLog {
+    @Id
+    @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    )
+    @Column(
+        name = "audit_log_id",
+        nullable = false,
+        updatable = false,
+        columnDefinition = "INT"
+    )
     private Long auditId;
+
+    @Nationalized
+    @Column(
+        name = "entity",
+        nullable = false,
+        columnDefinition = "NVARCHAR(255)"
+    )
     private String entity;
+
+    @Nationalized
+    @Column(
+        name = "entity_id",
+        nullable = false,
+        columnDefinition = "INT"
+    )
     private Long entityId;
+
+    @Nationalized
+    @Column(
+        name = "action",
+        nullable = false,
+        columnDefinition = "NVARCHAR(255)"
+    )
     private String action;
+
+    @Nationalized
+    @Column(
+        name = "time_stamp",
+        nullable = false,
+        columnDefinition = "DATETIME2"
+    )
     private LocalDateTime timeStamp;
 
     // Foreign Key to Employee Entity
-    private Long userId;
+    // private Long userId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = true
+    )
+    @JoinColumn(
+        name = "user_id",
+        nullable = true,
+        foreignKey = @ForeignKey(
+            name = "fk_audit_log_employee_id"
+        )
+    )
+    private Employee employee;
+
+    @Nationalized
+    @Column(
+        name = "changes",
+        nullable = true,
+        columnDefinition = "NVARCHAR(MAX)"
+    )
     private String changes;
 
     // CREATE TABLE AuditLog (

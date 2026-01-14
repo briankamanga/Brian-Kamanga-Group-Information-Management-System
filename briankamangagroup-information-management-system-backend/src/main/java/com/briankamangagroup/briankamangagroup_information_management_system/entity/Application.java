@@ -6,16 +6,89 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(
+    name = "application",
+    schema = "human_resource"
+)
 public class Application {
+    @Id
+    @GeneratedValue(
+        strategy = GenerationType.IDENTITY
+    )
+    @Column(
+        name = "application_id",
+        nullable = false,
+        updatable = false,
+        columnDefinition = "INT"
+    )
     private Long applicationId;
 
     // Foreign Key to Candidate Entity
-    private Long candidateId;
+    // private Long candidateId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false
+    )
+    @JoinColumn(
+        name = "candidate_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_application_candidate_id"
+        )
+    )
+    private Candidate candidate;
 
     // Foreign Key to JobRequisition Entity
-    private Long requisitionId;
+    // private Long requisitionId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false
+    )
+    @JoinColumn(
+        name = "requisition_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_application_requisition_id"
+        )
+    )
+    private JobRequisition jobRequisition;
+
+
+    @Nationalized
+    @Column(
+        name = "stage",
+        nullable = true,
+        columnDefinition = "NVARCHAR(255)"
+    )
     private String stage;
+
+
+    @Nationalized
+    @Column(
+        name = "status",
+        nullable = true,
+        columnDefinition = "NVARCHAR(255)"
+    )
     private String status;
 
     // CREATE TABLE Application (

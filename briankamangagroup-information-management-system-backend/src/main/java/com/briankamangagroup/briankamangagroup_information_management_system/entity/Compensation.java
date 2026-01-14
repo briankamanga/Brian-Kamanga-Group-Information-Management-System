@@ -88,7 +88,7 @@ public class Compensation {
     @Nationalized
     @Column(
         name = "pay_frequency",
-        nullable = false,
+        nullable = true,
         columnDefinition = "NVARCHAR(50)"
     )
     private String payFrequency;

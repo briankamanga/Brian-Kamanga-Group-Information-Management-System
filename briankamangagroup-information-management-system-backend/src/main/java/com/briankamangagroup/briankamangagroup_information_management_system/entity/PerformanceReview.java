@@ -93,10 +93,11 @@ public class PerformanceReview {
     // private Long reviewerId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "reviewer_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_performance_review_employee_reviewer_id"
         )
