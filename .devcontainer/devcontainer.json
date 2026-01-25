@@ -1,0 +1,9 @@
+{
+  "forwardPorts": [8090],
+  "portsAttributes": {
+    "8090": {
+      "label": "Spring Boot API",
+      "onAutoForward": "public"
+    }
+  }
+}

@@ -102,7 +102,7 @@ public class CompanySystem {
     @Column(
         name = "status",
         nullable = false,
-        columnDefinition = "NVARCHAR(50) CONSTRAINT chk_company_system_status CHECK (status IN ('Initiated', 'Development', 'In Progress', 'Completed', 'Testing', 'Deployed'))"
+        columnDefinition = "NVARCHAR(50)" // CONSTRAINT chk_company_system_status CHECK (status IN ('Initiated', 'Development', 'In Progress', 'Completed', 'Testing', 'Deployed'))"
     )
     private String status;
 

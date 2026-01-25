@@ -93,7 +93,7 @@ public class Project {
     @Column(
         name = "project_status",
         nullable = false,
-        columnDefinition = "VARCHAR(50) CONSTRAINT chk_project_status CHECK (project_status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
+        columnDefinition = "VARCHAR(50)" // CONSTRAINT chk_project_status CHECK (project_status IN ('PLANNED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
     )
     @ColumnDefault("'PLANNED'")
     private String projectStatus;

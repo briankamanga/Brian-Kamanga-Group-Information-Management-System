@@ -127,7 +127,7 @@ public class ProjectTask {
     @Column(
         name = "task_status",
         nullable = true,
-        columnDefinition = "NVARCHAR(50) CONSTRAINT chk_project_task_task_status CHECK (task_status IN ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
+        columnDefinition = "NVARCHAR(50)" // CONSTRAINT chk_project_task_task_status CHECK (task_status IN ('NOT_STARTED', 'IN_PROGRESS', 'COMPLETED', 'ON_HOLD', 'CANCELLED'))"
     )
     private String taskStatus;
 
