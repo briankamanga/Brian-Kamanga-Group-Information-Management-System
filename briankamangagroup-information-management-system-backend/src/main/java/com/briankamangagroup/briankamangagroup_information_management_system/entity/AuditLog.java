@@ -1,13 +1,11 @@
 package com.briankamangagroup.briankamangagroup_information_management_system.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +15,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,93 +27,89 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "time_entry",
+    name = "audit_log",
     schema = "human_resource"
-)  
-public class TimeEntry {
+)
+public class AuditLog {
     @Id
-    @GeneratedValue
-    (
+    @GeneratedValue(
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "time_entry_id",
+        name = "audit_log_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long timeEntryId;
+    private Long auditId;
 
-    // Foreign Key to Employee entity
-    // private Long employeeId;
+    @Nationalized
+    @Column(
+        name = "entity",
+        nullable = false,
+        columnDefinition = "NVARCHAR(255)"
+    )
+    private String entity;
+
+    @Nationalized
+    @Column(
+        name = "entity_id",
+        nullable = false,
+        columnDefinition = "INT"
+    )
+    private Long entityId;
+
+    @Nationalized
+    @Column(
+        name = "action",
+        nullable = false,
+        columnDefinition = "NVARCHAR(255)"
+    )
+    private String action;
+
+    @Nationalized
+    @Column(
+        name = "time_stamp",
+        nullable = false,
+        columnDefinition = "DATETIME2"
+    )
+    private LocalDateTime timeStamp;
+
+    // Foreign Key to Employee Entity
+    // private Long userId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
-        name = "employee_id",
-        nullable = false,
+        name = "user_id",
+        nullable = true,
         foreignKey = @ForeignKey(
-            name = "fk_timeentry_employee"
-        )   
+            name = "fk_audit_log_employee_id"
+        )
     )
     private Employee employee;
 
-
     @Nationalized
     @Column(
-        name = "date",
-        nullable = false,
-        columnDefinition = "DATE"
-    )   
-    private LocalDate date;
-
-    @Nationalized
-    @Column(
-        name = "hours",
-        nullable = false,
-        columnDefinition = "MONEY"
-    )
-    private Double hours;
-    
-
-
-    // Foreign Key to Project entity
-    // private Long projectId;
-    @ManyToOne(
-        fetch = FetchType.LAZY,
-        optional = true    
-    )
-    @JoinColumn(
-        name = "project_id",
+        name = "changes",
         nullable = true,
-        foreignKey = @ForeignKey(
-            name = "fk_timeentry_project"
-        )
+        columnDefinition = "NVARCHAR(MAX)"
     )
-    private Project project;
+    private String changes;
 
+    // CREATE TABLE AuditLog (
+    //     audit_id     BIGINT PRIMARY KEY,
+    //     entity       VARCHAR(100) NOT NULL,
+    //     entity_id    BIGINT NOT NULL,
+    //     action       VARCHAR(50) NOT NULL,
+    //     timestamp    DATETIME NOT NULL,
+    //     user_id      BIGINT,
+    //     changes      JSON,
 
-    @Nationalized
-    @Column(
-        name = "approval_status",
-        nullable = true,
-        columnDefinition = "NVARCHAR(50)"
-    )
-    private String approvalStatus;
-
-    // CREATE TABLE TimeEntry (
-    //     time_entry_id   BIGINT PRIMARY KEY,
-    //     employee_id     BIGINT NOT NULL,
-    //     date            DATE NOT NULL,
-    //     hours           DECIMAL(5,2) NOT NULL,
-    //     project_id      BIGINT,
-    //     approval_status VARCHAR(50),
-
-    //     CONSTRAINT fk_timeentry_employee
-    //         FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
+    //     CONSTRAINT fk_audit_user
+    //         FOREIGN KEY (user_id) REFERENCES Employee(employee_id)
     // );
-
 
 
 
@@ -127,7 +120,7 @@ public class TimeEntry {
         columnDefinition = "BIT"
     )
     @ColumnDefault("1")
-    private Boolean isActive;
+    private Boolean isActive = true;    
 
     @Column(
         name = "created_date",
@@ -137,13 +130,14 @@ public class TimeEntry {
     @ColumnDefault("GETDATE()")
     private LocalDateTime createdDate;
 
+    @Nationalized
     @Column(
         name = "created_by",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
     @ColumnDefault("SYSTEM_USER")
-    private String createdBy;
+    private String createdBy;   
 
     @Column(
         name = "modified_date",
@@ -152,6 +146,7 @@ public class TimeEntry {
     )
     private LocalDateTime modifiedDate;
 
+    @Nationalized
     @Column(
         name = "modified_by",
         nullable = true,
@@ -164,27 +159,14 @@ public class TimeEntry {
         nullable = true,
         columnDefinition = "DATETIME2"
     )
-    private LocalDateTime deactivatedDate;
+    private LocalDateTime deactivatedDate;    
 
+    @Nationalized
     @Column(
         name = "deactivated_by",
         nullable = true,
         columnDefinition = "NVARCHAR(255)"
     )
     private String deactivatedBy;
-
-
-
-
-    // // OneToMany - Self-referential relationship
-    // @OneToMany(
-    //     mappedBy = "timeEntries",
-    //     fetch = FetchType.LAZY,
-    //     cascade = CascadeType.ALL,
-    //     orphanRemoval = true
-    // )
-    // private List<TimeEntry> timeEntries;
-
-
 
 }

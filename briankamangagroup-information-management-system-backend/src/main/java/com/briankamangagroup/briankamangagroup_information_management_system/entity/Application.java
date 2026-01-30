@@ -1,13 +1,10 @@
 package com.briankamangagroup.briankamangagroup_information_management_system.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Nationalized;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,12 +14,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 
 @Getter
 @Setter
@@ -30,92 +27,85 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "time_entry",
+    name = "application",
     schema = "human_resource"
-)  
-public class TimeEntry {
+)
+public class Application {
     @Id
-    @GeneratedValue
-    (
+    @GeneratedValue(
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "time_entry_id",
+        name = "application_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long timeEntryId;
+    private Long applicationId;
 
-    // Foreign Key to Employee entity
-    // private Long employeeId;
+    // Foreign Key to Candidate Entity
+    // private Long candidateId;
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
     )
     @JoinColumn(
-        name = "employee_id",
+        name = "candidate_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_timeentry_employee"
-        )   
-    )
-    private Employee employee;
-
-
-    @Nationalized
-    @Column(
-        name = "date",
-        nullable = false,
-        columnDefinition = "DATE"
-    )   
-    private LocalDate date;
-
-    @Nationalized
-    @Column(
-        name = "hours",
-        nullable = false,
-        columnDefinition = "MONEY"
-    )
-    private Double hours;
-    
-
-
-    // Foreign Key to Project entity
-    // private Long projectId;
-    @ManyToOne(
-        fetch = FetchType.LAZY,
-        optional = true    
-    )
-    @JoinColumn(
-        name = "project_id",
-        nullable = true,
-        foreignKey = @ForeignKey(
-            name = "fk_timeentry_project"
+            name = "fk_application_candidate_id"
         )
     )
-    private Project project;
+    private Candidate candidate;
+
+    // Foreign Key to JobRequisition Entity
+    // private Long requisitionId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false
+    )
+    @JoinColumn(
+        name = "requisition_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_application_requisition_id"
+        )
+    )
+    private JobRequisition jobRequisition;
 
 
     @Nationalized
     @Column(
-        name = "approval_status",
+        name = "stage",
         nullable = true,
-        columnDefinition = "NVARCHAR(50)"
+        columnDefinition = "NVARCHAR(255)"
     )
-    private String approvalStatus;
+    private String stage;
 
-    // CREATE TABLE TimeEntry (
-    //     time_entry_id   BIGINT PRIMARY KEY,
-    //     employee_id     BIGINT NOT NULL,
-    //     date            DATE NOT NULL,
-    //     hours           DECIMAL(5,2) NOT NULL,
-    //     project_id      BIGINT,
-    //     approval_status VARCHAR(50),
 
-    //     CONSTRAINT fk_timeentry_employee
-    //         FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
+    @Nationalized
+    @Column(
+        name = "status",
+        nullable = true,
+        columnDefinition = "NVARCHAR(255)"
+    )
+    private String status;
+
+    // CREATE TABLE Application (
+    //     application_id   BIGINT PRIMARY KEY,
+    //     candidate_id     BIGINT NOT NULL,
+    //     requisition_id   BIGINT NOT NULL,
+    //     stage            VARCHAR(100),
+    //     status           VARCHAR(50),
+
+    //     CONSTRAINT fk_application_candidate
+    //         FOREIGN KEY (candidate_id) REFERENCES Candidate(candidate_id),
+
+    //     CONSTRAINT fk_application_requisition
+    //         FOREIGN KEY (requisition_id) REFERENCES JobRequisition(requisition_id)
     // );
+
+
 
 
 
@@ -127,7 +117,7 @@ public class TimeEntry {
         columnDefinition = "BIT"
     )
     @ColumnDefault("1")
-    private Boolean isActive;
+    private Boolean isActive = true;    
 
     @Column(
         name = "created_date",
@@ -137,13 +127,14 @@ public class TimeEntry {
     @ColumnDefault("GETDATE()")
     private LocalDateTime createdDate;
 
+    @Nationalized
     @Column(
         name = "created_by",
         nullable = false,
         columnDefinition = "NVARCHAR(255)"
     )
     @ColumnDefault("SYSTEM_USER")
-    private String createdBy;
+    private String createdBy;   
 
     @Column(
         name = "modified_date",
@@ -152,6 +143,7 @@ public class TimeEntry {
     )
     private LocalDateTime modifiedDate;
 
+    @Nationalized
     @Column(
         name = "modified_by",
         nullable = true,
@@ -164,27 +156,15 @@ public class TimeEntry {
         nullable = true,
         columnDefinition = "DATETIME2"
     )
-    private LocalDateTime deactivatedDate;
+    private LocalDateTime deactivatedDate;    
 
+    @Nationalized
     @Column(
         name = "deactivated_by",
         nullable = true,
         columnDefinition = "NVARCHAR(255)"
     )
     private String deactivatedBy;
-
-
-
-
-    // // OneToMany - Self-referential relationship
-    // @OneToMany(
-    //     mappedBy = "timeEntries",
-    //     fetch = FetchType.LAZY,
-    //     cascade = CascadeType.ALL,
-    //     orphanRemoval = true
-    // )
-    // private List<TimeEntry> timeEntries;
-
 
 
 }

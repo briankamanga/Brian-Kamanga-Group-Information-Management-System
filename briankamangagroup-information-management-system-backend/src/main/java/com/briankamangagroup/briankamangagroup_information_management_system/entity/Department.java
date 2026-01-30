@@ -65,7 +65,7 @@ public class Department {
     @Nationalized
     @Column(
         name = "department_code",
-        nullable = true,
+        nullable = false,
         columnDefinition = "NVARCHAR(100)"
     )
     private String department_code;
@@ -83,10 +83,11 @@ public class Department {
     // ManyToOne - Self Reference
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "parent_department_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_department_parent_department_id"
         )
@@ -100,11 +101,11 @@ public class Department {
     // private Long headEmployeeId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
         name = "head_employee_id",
-        nullable = false,
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_department_head_employee_id"
         )
@@ -198,6 +199,16 @@ public class Department {
         orphanRemoval = true
     )
     private List<Employee> employees;
+
+
+    // OneToMany linked JobRequisition
+    @OneToMany(
+        mappedBy = "department",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<JobRequisition> jobRequisitions;
 
 
 }

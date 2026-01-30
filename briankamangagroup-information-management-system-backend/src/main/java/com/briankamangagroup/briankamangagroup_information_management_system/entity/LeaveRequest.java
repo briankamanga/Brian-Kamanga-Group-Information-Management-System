@@ -67,7 +67,7 @@ public class LeaveRequest {
     @Nationalized
     @Column(
         name = "leave_type",
-        nullable = true,
+        nullable = false,
         columnDefinition = "NVARCHAR(100)"
     )
     private String leaveType;
@@ -107,10 +107,11 @@ public class LeaveRequest {
     // private Long approverId;
     @ManyToOne(
         fetch = FetchType.LAZY,
-        optional = false
+        optional = true
     )
     @JoinColumn(
-        name = "employee_id",
+        name = "approver_id",
+        nullable = true,
         foreignKey = @ForeignKey(
             name = "fk_leave_request_approver_id"
         )
@@ -192,14 +193,14 @@ public class LeaveRequest {
 
 
 
-    // OneToMany - Self-Referential relationship
-    @OneToMany(
-        mappedBy = "leaveRequests",
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<LeaveRequest> leaveRequests;
+    // // OneToMany - Self-Referential relationship
+    // @OneToMany(
+    //     mappedBy = "leaveRequests",
+    //     fetch = FetchType.LAZY,
+    //     cascade = CascadeType.ALL,
+    //     orphanRemoval = true
+    // )
+    // private List<LeaveRequest> leaveRequests;
 
 
 

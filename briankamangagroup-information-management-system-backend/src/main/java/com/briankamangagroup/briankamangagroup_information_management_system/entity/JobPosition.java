@@ -164,4 +164,15 @@ public class JobPosition {
     )
     private List<Employee> employees;
 
+
+
+    // OneToMany with JobRequisition
+    @OneToMany(
+        mappedBy = "jobPosition",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<JobRequisition> jobRequisitions;
+
 }

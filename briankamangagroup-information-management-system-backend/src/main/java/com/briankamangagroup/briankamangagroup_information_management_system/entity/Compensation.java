@@ -88,7 +88,7 @@ public class Compensation {
     @Nationalized
     @Column(
         name = "pay_frequency",
-        nullable = false,
+        nullable = true,
         columnDefinition = "NVARCHAR(50)"
     )
     private String payFrequency;
@@ -190,14 +190,16 @@ public class Compensation {
 
 
 
+    // // Entity self reference object
+    // private Compensation compensation;
 
-    // OneToMany Relationship - self-referencing example
-    @OneToMany(
-        fetch = FetchType.LAZY,
-        mappedBy = "compensations",
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
-    )
-    private List<Compensation> compensations;   
+    // // OneToMany Relationship - self-referencing example
+    // @OneToMany(
+    //     fetch = FetchType.LAZY,
+    //     mappedBy = "compensation",
+    //     cascade = CascadeType.ALL,
+    //     orphanRemoval = true
+    // )
+    // private List<Compensation> compensations;   
 
 }

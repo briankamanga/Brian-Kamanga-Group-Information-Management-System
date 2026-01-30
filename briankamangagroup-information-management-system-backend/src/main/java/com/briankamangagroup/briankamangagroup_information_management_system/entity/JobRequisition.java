@@ -1,6 +1,5 @@
 package com.briankamangagroup.briankamangagroup_information_management_system.entity;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,91 +29,81 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(
-    name = "time_entry",
+    name = "job_requisition",
     schema = "human_resource"
-)  
-public class TimeEntry {
+)
+public class JobRequisition {
     @Id
-    @GeneratedValue
-    (
+    @GeneratedValue(
         strategy = GenerationType.IDENTITY
     )
     @Column(
-        name = "time_entry_id",
+        name = "job_requisition_id",
         nullable = false,
         updatable = false,
         columnDefinition = "INT"
     )
-    private Long timeEntryId;
+    private Long requisitionId;
 
-    // Foreign Key to Employee entity
-    // private Long employeeId;
+    // Foreign Key to JobPosition Entity
+    // private Long jobId;
     @ManyToOne(
         fetch = FetchType.LAZY,
         optional = false
     )
     @JoinColumn(
-        name = "employee_id",
+        name = "job_id",
         nullable = false,
         foreignKey = @ForeignKey(
-            name = "fk_timeentry_employee"
-        )   
-    )
-    private Employee employee;
-
-
-    @Nationalized
-    @Column(
-        name = "date",
-        nullable = false,
-        columnDefinition = "DATE"
-    )   
-    private LocalDate date;
-
-    @Nationalized
-    @Column(
-        name = "hours",
-        nullable = false,
-        columnDefinition = "MONEY"
-    )
-    private Double hours;
-    
-
-
-    // Foreign Key to Project entity
-    // private Long projectId;
-    @ManyToOne(
-        fetch = FetchType.LAZY,
-        optional = true    
-    )
-    @JoinColumn(
-        name = "project_id",
-        nullable = true,
-        foreignKey = @ForeignKey(
-            name = "fk_timeentry_project"
+            name = "fk_job_requisition_job_position_id"
         )
     )
-    private Project project;
+    private JobPosition jobPosition;
 
+
+    // Foreign Key to Department Entity
+    // private Long departmentId;
+    @ManyToOne(
+        fetch = FetchType.LAZY,
+        optional = false
+    )
+    @JoinColumn(
+        name = "department_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_job_requisition_department_id"
+        )
+    )
+    private Department department;
 
     @Nationalized
     @Column(
-        name = "approval_status",
+        name = "openings",
+        nullable = true,
+        columnDefinition = "INT"
+    )
+    private Long openings;
+
+    @Nationalized
+    @Column(
+        name = "status",
         nullable = true,
         columnDefinition = "NVARCHAR(50)"
     )
-    private String approvalStatus;
+    private String status;
 
-    // CREATE TABLE TimeEntry (
-    //     time_entry_id   BIGINT PRIMARY KEY,
-    //     employee_id     BIGINT NOT NULL,
-    //     date            DATE NOT NULL,
-    //     hours           DECIMAL(5,2) NOT NULL,
-    //     project_id      BIGINT,
-    //     approval_status VARCHAR(50),
+    // CREATE TABLE JobRequisition (
+    //     requisition_id   BIGINT PRIMARY KEY,
+    //     job_id           BIGINT NOT NULL,
+    //     department_id    BIGINT NOT NULL,
+    //     openings         INT NOT NULL,
+    //     status           VARCHAR(50),
 
-    //     CONSTRAINT fk_timeentry_employee
-    //         FOREIGN KEY (employee_id) REFERENCES Employee(employee_id)
+    //     CONSTRAINT fk_requisition_job
+    //         FOREIGN KEY (job_id) REFERENCES Job(job_id),
+
+    //     CONSTRAINT fk_requisition_department
+    //         FOREIGN KEY (department_id) REFERENCES Department(department_id)
     // );
 
 
@@ -176,14 +165,16 @@ public class TimeEntry {
 
 
 
-    // // OneToMany - Self-referential relationship
-    // @OneToMany(
-    //     mappedBy = "timeEntries",
-    //     fetch = FetchType.LAZY,
-    //     cascade = CascadeType.ALL,
-    //     orphanRemoval = true
-    // )
-    // private List<TimeEntry> timeEntries;
+    // OneToMany with Application
+    @OneToMany(
+        mappedBy = "jobRequisition",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    private List<Application> applications;
+
+
 
 
 
